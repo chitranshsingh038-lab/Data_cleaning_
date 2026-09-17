@@ -106,7 +106,7 @@ SET card_ = 'payment_by_cash'
 WHERE cash_type = 'cash'
   AND (card_ IS NULL OR TRIM(card_) = '');
 
-  4. Categorical Data Validation
+4. Categorical Data Validation
 
 Checked the cash_type column to identify inconsistent or misspelled payment methods.
 
