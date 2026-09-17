@@ -94,3 +94,53 @@ WHERE date_ IS NULL OR TRIM(date_) = ''
    OR card_ IS NULL OR TRIM(card_) = ''
    OR money IS NULL OR TRIM(money) = ''
    OR coffee_name IS NULL OR TRIM(coffee_name) = '';
+
+3. Handling Missing Card Values
+
+For cash transactions where the card_ column was empty or NULL, the value was standardized as payment_by_cash.
+
+sql
+
+UPDATE coffee_sales
+SET card_ = 'payment_by_cash'
+WHERE cash_type = 'cash'
+  AND (card_ IS NULL OR TRIM(card_) = '');
+
+  4. Categorical Data Validation
+
+Checked the cash_type column to identify inconsistent or misspelled payment methods.
+
+sql
+
+SELECT 
+    cash_type,
+    COUNT(*) AS total_transactions
+FROM coffee_sales
+GROUP BY cash_type
+ORDER BY total_transactions DESC;
+
+5. Duplicate Record Check
+
+Checked for exact duplicate transactions using the relevant columns:
+
+sql
+
+SELECT 
+    date_,datetime_,cash_type,
+    card_,money,coffee_name,
+    COUNT(*) AS duplicate_count
+FROM coffee_sales
+GROUP BY 
+    date_,datetime_,cash_type,
+    card_,money,coffee_name
+HAVING COUNT(*) > 1;
+
+6. Date Conversion
+
+The original date_ column was stored as text in DD-MM-YYYY format.
+The text values were converted into a proper MySQL DATE datatype using STR_TO_DATE().
+
+sql
+
+UPDATE coffee_sales
+SET dates_ = STR_TO_DATE(TRIM(date_), '%d-%m-%Y');
